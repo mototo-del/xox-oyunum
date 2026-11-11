@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XOX Oyunu</title>
+<style>
+body {
+  background: #17172b;
+  color: white;
+  font-family: Arial;
+  text-align: center;
+  padding: 20px;
+}
+h1 { color: #00e5ff; }
+#board {
+  display: grid;
+  grid-template-columns: repeat(3, 90px);
+  gap: 8px;
+  justify-content: center;
+  margin: 25px auto;
+}
+.cell {
+  width: 90px;
+  height: 90px;
+  font-size: 45px;
+  font-weight: bold;
+  background: #292947;
+  color: white;
+  border: 2px solid #00e5ff;
+  border-radius: 12px;
+}
+button#reset {
+  padding: 12px 25px;
+  background: #00e5ff;
+  border: none;
+  border-radius: 10px;
+  font-size: 17px;
+}
+</style>
+</head>
+<body>
+<h1>🎮 XOX OYUNU</h1>
+<h2 id="status">Sıra: X</h2>
+<div id="board"></div>
+<button id="reset" onclick="resetGame()">Yeniden Başlat</button>
+
+<script>
+let board = ["","","","","","","","",""];
+let player = "X";
+let finished = false;
+const wins = [
+[0,1,2],[3,4,5],[6,7,8],
+[0,3,6],[1,4,7],[2,5,8],
+[0,4,8],[2,4,6]
+];
+
+function draw() {
+  const area = document.getElementById("board");
+  area.innerHTML = "";
+  board.forEach((value, i) => {
+    const cell = document.createElement("button");
+    cell.className = "cell";
+    cell.textContent = value;
+    cell.onclick = () => play(i);
+    area.appendChild(cell);
+  });
+}
+
+function play(i) {
+  if (board[i] || finished) return;
+  board[i] = player;
+  const won = wins.some(line =>
+    line.every(index => board[index] === player)
+  );
+  if (won) {
+    document.getElementById("status").textContent =
+      "🎉 Kazanan: " + player;
+    finished = true;
+  } else if (board.every(x => x !== "")) {
+    document.getElementById("status").textContent =
+      "Berabere!";
+    finished = true;
+  } else {
+    player = player === "X" ? "O" : "X";
+    document.getElementById("status").textContent =
+      "Sıra: " + player;
+  }
+  draw();
+}
+
+function resetGame() {
+  board = ["","","","","","","","",""];
+  player = "X";
+  finished = false;
+  document.getElementById("status").textContent = "Sıra: X";
+  draw();
+}
+draw();
+</script>
+</body>
+</html>
